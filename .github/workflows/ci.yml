@@ -1,0 +1,56 @@
+name: Demo CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  mongo-init:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          until nc -z localhost 27017; do
+            echo "Waiting for MongoDB..."
+            sleep 1
+          done
+          echo "MongoDB is up and running!"
+
+      - name: Check MongoDB connection
+        working-directory: ./backend
+        run: |
+          npm install
+          node seed.js
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies and run tests
+        working-directory: ./backend
+        run: |
+          npm install
+          npm test

@@ -1,0 +1,21 @@
+services:
+  mongo:
+    image: "mongo:latest"
+    ports:
+      - "7500:27017"
+
+  backend:
+    build: ./backend
+    image: todo-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+
+  Frontend:
+    build: ./frontend
+    image: todo-frontend
+    ports:
+      - "9000:5173"
+    depends_on:
+      - backend
