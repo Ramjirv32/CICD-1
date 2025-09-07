@@ -1,29 +1,11 @@
 import supertest from "supertest";
-import { app, server } from "../index.js";
+import { app, server } from "./index.js";
 import mongoose from "mongoose";
-
-// Set the test environment
-process.env.NODE_ENV = 'test';
 
 const request = supertest(app);
 
 beforeAll(async () => {
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  const Recipe = mongoose.model("Recipe");
-  await Recipe.deleteMany({});
-  
-  const seedRecipe = new Recipe({
-    title: "Test Pasta",
-    ingredients: ["pasta", "sauce", "cheese"],
-    instructions: "Mix everything together and cook",
-    cookingTime: 15,
-    difficulty: "Easy",
-    favorite: false
-  });
-  
-  await seedRecipe.save();
-  console.log("Seed data added:", seedRecipe);
+  await new Promise(resolve => setTimeout(resolve, 1000));
 });
 
 describe("testing the root file", () => {
@@ -33,13 +15,16 @@ describe("testing the root file", () => {
   });
 });
 
+
+
 describe("testing get api recipes", () => {
   it("it will return array", async () => {
     const response = await request.get("/api/recipes");
-    console.log("GET /api/recipes response:", response.body);
     expect(Array.isArray(response.body)).toBe(true);
-  }, 15000);  
+  });
 });
+
+
 
 describe("testing post api recipes", () => {
   it("it will add a recipe", async () => {
@@ -53,11 +38,10 @@ describe("testing post api recipes", () => {
     const response = await request.post("/api/recipes").send(newRecipe);
     expect(response.statusCode).toBe(201);
     expect(response.text).toBe("Recipe added");
-    
-    const getResponse = await request.get("/api/recipes");
-    console.log("Recipes after adding:", getResponse.body);
-  }, 15000); 
+  });
 });
+
+
 
 describe("testing delete api recipes", () => {
   it("it will delete a recipe", async () => {
@@ -76,28 +60,15 @@ describe("testing delete api recipes", () => {
       (recipe) => recipe.title === "Recipe to Delete"
     );
     expect(addedRecipe).toBeDefined();
-    console.log("Recipe to delete:", addedRecipe);
 
     const deleteResponse = await request.delete(`/api/recipes/${addedRecipe._id}`);
     expect(deleteResponse.statusCode).toBe(200);
     expect(deleteResponse.text).toBe(`Recipe with id ${addedRecipe._id} deleted`);
-    
-    const afterDeleteResponse = await request.get("/api/recipes");
-    console.log("Recipes after deletion:", afterDeleteResponse.body);
-  }, 20000); 
+  });
 });
 
 
 afterAll(async () => {
-  try {
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-      await collections[key].deleteMany({});
-    }
-    
-    await mongoose.connection.close();
-    await new Promise(resolve => server.close(resolve));
-  } catch (error) {
-    console.error("Error in afterAll:", error);
-  }
-}, 15000);
+  await mongoose.connection.close();
+  await new Promise(resolve => server.close(resolve));
+});
