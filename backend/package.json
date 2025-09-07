@@ -20,6 +20,9 @@
     "multer": "^2.0.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/generator": "^7.23.0",
+    "@babel/preset-env": "^7.23.9",
     "jest": "^30.1.3",
     "jest-extended": "^6.0.0",
     "supertest": "^7.1.4"

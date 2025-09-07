@@ -1,7 +1,7 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import cors from "cors";
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
 const app = express();
 
@@ -82,7 +82,7 @@ app.get("/api/recipes", (req, res) => {
 app.delete("/api/recipes/:id", (req, res) => {
   Recipe.findByIdAndDelete(req.params.id)
     .then(() => {
-      res.send(`Recipe with id ${req.params.id} deleted`);
+      res.status(200).send(`Recipe with id ${req.params.id} deleted`);
     })
     .catch((err) => {
       console.error("Error deleting recipe:", err);
