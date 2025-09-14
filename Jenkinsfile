@@ -29,7 +29,6 @@ pipeline {
                         echo "Running backend tests"
                         rm -rf package-lock.json
                         npm install
-                        npm run prepare-test
                         npm test
                     '''
                 }
