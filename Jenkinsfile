@@ -7,6 +7,8 @@ pipeline {
         EC2_HOST      = '135.235.193.165'                   
         EC2_USER      = 'ramji'                            
         EC2_PASS      = credentials('EC2_PASS')              
+        NVM_DIR       = '/home/ramji/.nvm'
+        NODE_VERSION  = '18'  // Using Node 18 for compatibility
     }
 
     stages {
@@ -21,14 +23,17 @@ pipeline {
                 dir("backend") {
                     sh '''
                         echo "Loading nvm and Node.js"
-                        export NVM_DIR="/home/ramji/.nvm"
                         [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                        nvm install $NODE_VERSION
+                        nvm use $NODE_VERSION
                         node -v
                         npm -v
 
-                        echo "Running backend tests"
-                        rm -rf package-lock.json
+                        echo "Cleaning old modules and installing dependencies"
+                        rm -rf node_modules package-lock.json
                         npm install
+
+                        echo "Running backend tests"
                         npm test
                     '''
                 }
@@ -40,12 +45,14 @@ pipeline {
                 dir("frontend") {
                     sh '''
                         echo "Loading nvm and Node.js"
-                        export NVM_DIR="/home/ramji/.nvm"
                         [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+                        nvm install $NODE_VERSION
+                        nvm use $NODE_VERSION
                         node -v
                         npm -v
 
-                        echo "Running frontend build"
+                        echo "Installing frontend dependencies and building"
+                        rm -rf node_modules package-lock.json
                         npm install
                         npm run build
                     '''
@@ -94,6 +101,7 @@ pipeline {
 
     post {
         always {
+            echo "Cleaning workspace"
             cleanWs()
         }
     }
