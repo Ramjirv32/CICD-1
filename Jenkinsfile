@@ -56,7 +56,7 @@ pipeline {
 
         stage("Run Docker Compose") {
             steps {
-                sh 'docker-compose up -d --scale backend=2 --scale frontend=2'
+                sh 'docker compose up -d --scale backend=2 --scale frontend=2'
             }
            }   }
     
