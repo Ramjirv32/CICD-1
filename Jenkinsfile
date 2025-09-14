@@ -77,15 +77,23 @@ pipeline {
         }
 
         stage("Deploy to EC2") {
-        steps {
-            withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
-                  sh '''
-                    sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
-                    sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
-                    sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
-                    sudo docker-compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
-                "
-            '''
+            steps {
+                withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
+                    sh '''
+                        sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+                            sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
+                            sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
+                            sudo docker-compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
+                        "
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }
