@@ -12,7 +12,7 @@ services:
     depends_on:
       - mongo
 
-  Frontend:
+  frontend:
     build: ./frontend
     image: front
     ports:

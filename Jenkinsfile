@@ -23,8 +23,8 @@ pipeline {
                         npm install
                         npm test
                     '''
-                }
-            }
+              }
+        }
         }
 
         stage("Building Frontend") {
@@ -41,7 +41,7 @@ pipeline {
                         npm install
                         npm run build
                     '''
-                }
+              }
             }
         }
 
@@ -58,6 +58,6 @@ pipeline {
             steps {
                 sh 'docker-compose up -d --scale backend=2 --scale frontend=2'
             }
-        }
-    }
+           }   }
+    
 }
