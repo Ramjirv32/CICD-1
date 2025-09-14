@@ -20,7 +20,9 @@ pipeline {
             steps {
                 dir("backend") {
                     sh '''
-                        echo "Using system Node.js"
+                        echo "Loading nvm and Node.js"
+                        export NVM_DIR="/home/ramji/.nvm"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                         node -v
                         npm -v
 
@@ -37,7 +39,9 @@ pipeline {
             steps {
                 dir("frontend") {
                     sh '''
-                        echo "Using system Node.js"
+                        echo "Loading nvm and Node.js"
+                        export NVM_DIR="/home/ramji/.nvm"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                         node -v
                         npm -v
 
@@ -76,7 +80,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
                     sh '''
-                        sshpass -p "$EC2_PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+                        sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
                             sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
                             sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
                             sudo docker pull mongo:latest &&
