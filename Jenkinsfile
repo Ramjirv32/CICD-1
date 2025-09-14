@@ -1,26 +1,29 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage("checkout"){
-            steps{
+    stages {
+        stage("Checkout") {
+            steps {
                 checkout scm
             }
         }
-        stage("Testing"){
-            steps{
-                sh "echo 'Testing backend'"
-                sh "cd backend && npm install && npm test"
 
-                sh "echo 'Testing backend'"
-                sh "cd backend && npm install && npm test"
+        stage("Testing Backend") {
+            steps {
+                dir("backend") {
+                    sh "echo 'Running backend tests'"
+                    sh "npm install"
+                    sh "npm test"
+                }
             }
         }
-        stage("Building Frontend"){
-            steps{
-                sh "echo 'Building Frontend'"
-                sh "cd frontend && npm install && npm run build"
 
-               
+        stage("Building Frontend") {
+            steps {
+                dir("frontend") {
+                    sh "echo 'Running frontend build'"
+                    sh "npm install"
+                    sh "npm run build"
+                }
             }
         }
     }
