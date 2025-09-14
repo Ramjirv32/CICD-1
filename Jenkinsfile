@@ -14,7 +14,7 @@ pipeline {
                     sh '''
                         echo "Loading nvm and Node.js"
                         export NVM_DIR="/home/ramji/.nvm"
-                        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                         node -v
                         npm -v
 
@@ -33,7 +33,7 @@ pipeline {
                     sh '''
                         echo "Loading nvm and Node.js"
                         export NVM_DIR="/home/ramji/.nvm"
-                        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
                         node -v
                         npm -v
 
