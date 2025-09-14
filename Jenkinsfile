@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_USER = 'ramjirv3217'
-        DOCKERHUB_PASS = credentials('Vikas@2337')  
+        DOCKERHUB_PASS = credentials('DOCKERHUB_PASS')  
         EC2_HOST = '135.235.193.165'                
         EC2_USER = 'ramji'                    
     }
