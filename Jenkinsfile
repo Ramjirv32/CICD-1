@@ -3,9 +3,10 @@ pipeline {
 
     environment {
         DOCKERHUB_USER = 'ramjirv3217'
-        DOCKERHUB_PASS = credentials('DOCKERHUB_PASS')  
-        EC2_HOST = '135.235.193.165'                
-        EC2_USER = 'ramji'                    
+        DOCKERHUB_PASS = credentials('DOCKERHUB_PASS') 
+        EC2_HOST = '135.235.193.165'                     
+        EC2_USER = 'ramji'                              
+        EC2_PASS = credentials('EC2_PASS')              
     }
 
     stages {
@@ -75,15 +76,13 @@ pipeline {
 
         stage("Deploy to EC2") {
             steps {
-                sshagent(['EC2_SSH_KEY_ID']) {  
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST '
-                            docker pull $DOCKERHUB_USER/backend-image:latest
-                            docker pull $DOCKERHUB_USER/frontend-image:latest
-                            docker compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
-                        '
-                    '''
-                }
+                sh '''
+                    sshpass -p "$EC2_PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST '
+                        docker pull $DOCKERHUB_USER/backend-image:latest
+                        docker pull $DOCKERHUB_USER/frontend-image:latest
+                        docker compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
+                    '
+                '''
             }
         }
     }
