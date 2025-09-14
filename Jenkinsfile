@@ -83,11 +83,16 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
                     sh '''
+                        # First, copy the docker-compose and nginx config files to EC2
+                        sshpass -p "$PASS" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml $EC2_USER@$EC2_HOST:/home/$EC2_USER/todo-docker-compose.yml
+                        sshpass -p "$PASS" scp -o StrictHostKeyChecking=no ./nginx.conf $EC2_USER@$EC2_HOST:/home/$EC2_USER/nginx.conf
+                        
+                        # Then deploy the application
                         sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
                             sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
                             sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
                             sudo docker pull mongo:latest &&
-                            sudo docker-compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
+                            sudo docker-compose -f /home/$EC2_USER/todo-docker-compose.yml up -d
                         "
                     '''
                 }
