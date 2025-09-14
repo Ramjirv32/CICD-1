@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_USER = 'ramjirv3217'
+        DOCKERHUB_PASS = credentials('Vikas@2337')  
+        EC2_HOST = '135.235.193.165'                
+        EC2_USER = 'ramjirv3217'                    
+    }
+
     stages {
         stage("Checkout") {
             steps {
@@ -23,8 +30,8 @@ pipeline {
                         npm install
                         npm test
                     '''
-              }
-        }
+                }
+            }
         }
 
         stage("Building Frontend") {
@@ -41,7 +48,7 @@ pipeline {
                         npm install
                         npm run build
                     '''
-              }
+                }
             }
         }
 
@@ -54,10 +61,30 @@ pipeline {
             }
         }
 
-        stage("Run Docker Compose") {
+        stage("Push Images to Docker Hub") {
             steps {
-                sh 'docker compose up -d --scale backend=2 --scale frontend=2'
+                sh '''
+                    echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+                    docker tag backend-image $DOCKERHUB_USER/backend-image:latest
+                    docker tag frontend-image $DOCKERHUB_USER/frontend-image:latest
+                    docker push $DOCKERHUB_USER/backend-image:latest
+                    docker push $DOCKERHUB_USER/frontend-image:latest
+                '''
             }
-           }   }
-    
+        }
+
+        stage("Deploy to EC2") {
+            steps {
+                sshagent(['EC2_SSH_KEY_ID']) {  
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST '
+                            docker pull $DOCKERHUB_USER/backend-image:latest
+                            docker pull $DOCKERHUB_USER/frontend-image:latest
+                            docker compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
+                        '
+                    '''
+                }
+            }
+        }
+    }
 }
