@@ -11,6 +11,7 @@ pipeline {
             steps {
                 dir("backend") {
                     sh "echo 'Running backend tests'"
+                    sh "rm -rf package-lock.json"
                     sh "npm install"
                     sh "npm test"
                 }
