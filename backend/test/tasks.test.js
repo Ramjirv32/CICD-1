@@ -95,8 +95,17 @@ afterAll(async () => {
       await collections[key].deleteMany({});
     }
     
+    // Close mongoose connection
     await mongoose.connection.close();
-    await new Promise(resolve => server.close(resolve));
+    
+    // Ensure server is closed with a timeout to prevent hanging
+    if (server && server.close) {
+      await new Promise((resolve) => {
+        server.close(resolve);
+        // Add a timeout in case the server doesn't close properly
+        setTimeout(resolve, 3000);
+      });
+    }
   } catch (error) {
     console.error("Error in afterAll:", error);
   }

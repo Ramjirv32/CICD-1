@@ -29,8 +29,10 @@ pipeline {
                         echo "Running backend tests"
                         rm -rf package-lock.json
                         npm install
+                        # Kill any process using port 5000 to prevent conflicts
+                        lsof -ti:5000 | xargs kill -9 2>/dev/null || true
                         # Run the specialized CI test command that installs the correct Babel dependencies
-                        npm run test:ci
+                        PORT=0 npm run test:ci
                     '''
                 }
             }
