@@ -7,8 +7,6 @@ pipeline {
         EC2_HOST      = '135.235.193.165'                   
         EC2_USER      = 'ramji'                            
         EC2_PASS      = credentials('EC2_PASS')              
-        NVM_DIR       = '/home/ramji/.nvm'
-        NODE_VERSION  = '18'  // Using Node 18 for compatibility
     }
 
     stages {
@@ -22,18 +20,13 @@ pipeline {
             steps {
                 dir("backend") {
                     sh '''
-                        echo "Loading nvm and Node.js"
-                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                        nvm install $NODE_VERSION
-                        nvm use $NODE_VERSION
+                        echo "Using system Node.js"
                         node -v
                         npm -v
 
-                        echo "Cleaning old modules and installing dependencies"
-                        rm -rf node_modules package-lock.json
-                        npm install
-
                         echo "Running backend tests"
+                        rm -rf package-lock.json
+                        npm install
                         npm test
                     '''
                 }
@@ -44,15 +37,11 @@ pipeline {
             steps {
                 dir("frontend") {
                     sh '''
-                        echo "Loading nvm and Node.js"
-                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                        nvm install $NODE_VERSION
-                        nvm use $NODE_VERSION
+                        echo "Using system Node.js"
                         node -v
                         npm -v
 
-                        echo "Installing frontend dependencies and building"
-                        rm -rf node_modules package-lock.json
+                        echo "Running frontend build"
                         npm install
                         npm run build
                     '''
@@ -87,7 +76,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
                     sh '''
-                        sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+                        sshpass -p "$EC2_PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
                             sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
                             sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
                             sudo docker pull mongo:latest &&
@@ -101,7 +90,6 @@ pipeline {
 
     post {
         always {
-            echo "Cleaning workspace"
             cleanWs()
         }
     }
