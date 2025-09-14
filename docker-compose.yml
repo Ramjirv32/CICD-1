@@ -8,7 +8,7 @@ services:
 
   backend:
     build: ./backend
-    image: backe
+    image: back
     depends_on:
       - mongo
 
