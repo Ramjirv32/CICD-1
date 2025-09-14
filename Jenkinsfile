@@ -75,33 +75,21 @@ pipeline {
                 }
             }
         }
-stage("Deploy to EC2") {
-    steps {
-        withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
-            sh '''
-                sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
-                    # Pull images
-                    sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
-                    sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
-                    sudo docker pull mongo:latest &&
 
-                    # Remove old containers
-                    sudo docker rm -f backend || true &&
-                    sudo docker rm -f frontend || true &&
-                    sudo docker rm -f mongo || true &&
-
-                    # Run MongoDB
-                    sudo docker run -d --name mongo -p 7500:27017 mongo:latest &&
-
-                    # Run backend and frontend
-                    sudo docker run -d --name backend --link mongo:mongo $DOCKERHUB_USER/backend-image:latest &&
-                    sudo docker run -d --name frontend --link backend:backend -p 9000:5173 $DOCKERHUB_USER/frontend-image:latest
-                "
-            '''
+        stage("Deploy to EC2") {
+            steps {
+                withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
+                    sh '''
+                        sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+                            sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
+                            sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
+                            sudo docker pull mongo:latest &&
+                            sudo docker-compose -f /home/$EC2_USER/todo-docker-compose.yml up -d --scale backend=2 --scale frontend=2
+                        "
+                    '''
+                }
+            }
         }
-    }
-}
-
     }
 
     post {
