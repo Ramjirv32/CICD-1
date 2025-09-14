@@ -29,7 +29,8 @@ pipeline {
                         echo "Running backend tests"
                         rm -rf package-lock.json
                         npm install
-                        npm test
+                        # Run the specialized CI test command that installs the correct Babel dependencies
+                        npm run test:ci
                     '''
                 }
             }
