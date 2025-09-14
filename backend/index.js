@@ -10,7 +10,6 @@ dotenv.config();
 app.use(cors('*'));
 app.use(express.json());
 
-// Use different connection strings for test environment vs. docker
 const mongoURL = process.env.NODE_ENV === 'test' 
   ? "mongodb://localhost:27017/recipes_test" 
   : "mongodb://mongo:27017/recipes";
@@ -91,7 +90,7 @@ app.delete("/api/recipes/:id", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+const server = app.listen(5000, () => {
   console.log(`Server running on port ${PORT}`);
 });
 

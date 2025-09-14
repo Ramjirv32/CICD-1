@@ -6,7 +6,7 @@ services:
 
   backend:
     build: ./backend
-    image: todo-backend
+    image: back
     ports:
       - "5000:5000"
     depends_on:
@@ -14,7 +14,7 @@ services:
 
   Frontend:
     build: ./frontend
-    image: todo-frontend
+    image: front
     ports:
       - "9000:5173"
     depends_on:
