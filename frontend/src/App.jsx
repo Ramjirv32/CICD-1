@@ -83,7 +83,7 @@ function App() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 bg-gray-50 min-h-screen">
       <header className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-indigo-700">Recipe Manager</h1>
+        <h1 className="text-4xl font-bold text-indigo-700">Recipe Manager -this is demo</h1>
       </header>
 
       <div className="bg-white rounded-xl shadow-md p-6 mb-10">
