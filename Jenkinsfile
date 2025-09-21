@@ -75,23 +75,22 @@ pipeline {
             }
         }
 
-        stage("Deploy to EC2") {
-            steps {
-                withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
-                    sh '''
-                        sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml $EC2_USER@$EC2_HOST:/home/$EC2_USER/todo-docker-compose.yml
-                        sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./nginx.conf $EC2_USER@$EC2_HOST:/home/$EC2_USER/nginx.conf
-                        
-                        sshpass -p "Vikas@23112005" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
-                            sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
-                            sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
-                            sudo docker pull mongo:latest &&
-                            sudo docker-compose -f /home/$EC2_USER/todo-docker-compose.yml up -d
-                        "
-                    '''
-                }
-            }
-        }
+      stage("Deploy to EC2") {
+    steps {
+        sh '''
+            sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml ramji@135.235.193.165:/home/ramji/todo-docker-compose.yml
+            sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./nginx.conf ramji@135.235.193.165:/home/ramji/nginx.conf
+
+            sshpass -p "Vikas@23112005" ssh -o StrictHostKeyChecking=no ramji@135.235.193.165 "
+                sudo docker pull ramjirv3217/backend-image:latest &&
+                sudo docker pull ramjirv3217/frontend-image:latest &&
+                sudo docker pull mongo:latest &&
+                sudo docker-compose -f /home/ramji/todo-docker-compose.yml up -d
+            "
+        '''
+    }
+}
+
     }
 
     post {
