@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_USER = 'ramjirv3217'
         DOCKERHUB_PASS = credentials('DOCKERHUB_PASS')  
-        EC2_HOST      = '135.235.193.165'                   
+        EC2_HOST      = '98.70.42.89'                   
         EC2_USER      = 'ramji'                            
         EC2_PASS      = credentials('EC2_PASS')              
     }
@@ -31,7 +31,7 @@ pipeline {
                         npm install
                         # Kill any process using port 5000 to prevent conflicts
                         lsof -ti:5000 | xargs kill -9 2>/dev/null || true
-                        # Run the specialized CI test command that installs the correct Babel dependencies
+                        # Run the specialized CI test command
                         PORT=0 npm run test:ci
                     '''
                 }
@@ -83,11 +83,11 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
                     sh '''
-                        # First, copy the docker-compose and nginx config files to EC2
+                        # Copy docker-compose and nginx config files to EC2
                         sshpass -p "$PASS" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml $EC2_USER@$EC2_HOST:/home/$EC2_USER/todo-docker-compose.yml
                         sshpass -p "$PASS" scp -o StrictHostKeyChecking=no ./nginx.conf $EC2_USER@$EC2_HOST:/home/$EC2_USER/nginx.conf
                         
-                        # Then deploy the application
+                        # Deploy the application
                         sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
                             sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
                             sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
@@ -102,7 +102,10 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            // Wrap cleanWs in node to avoid MissingContextVariableException
+            node {
+                cleanWs()
+            }
         }
     }
 }
