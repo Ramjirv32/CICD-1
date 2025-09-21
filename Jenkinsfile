@@ -5,7 +5,6 @@ pipeline {
         DOCKERHUB_USER = 'ramjirv3217'
         EC2_HOST       = '98.70.42.89'
         EC2_USER       = 'ramji'
-        // DOCKERHUB_PASS and EC2_PASS are injected securely via withCredentials
     }
 
     stages {
