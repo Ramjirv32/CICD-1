@@ -79,10 +79,10 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'EC2_PASS', variable: 'PASS')]) {
                     sh '''
-                        sshpass -p "$PASS" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml $EC2_USER@$EC2_HOST:/home/$EC2_USER/todo-docker-compose.yml
-                        sshpass -p "$PASS" scp -o StrictHostKeyChecking=no ./nginx.conf $EC2_USER@$EC2_HOST:/home/$EC2_USER/nginx.conf
+                        sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml $EC2_USER@$EC2_HOST:/home/$EC2_USER/todo-docker-compose.yml
+                        sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./nginx.conf $EC2_USER@$EC2_HOST:/home/$EC2_USER/nginx.conf
                         
-                        sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+                        sshpass -p "Vikas@23112005" ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
                             sudo docker pull $DOCKERHUB_USER/backend-image:latest &&
                             sudo docker pull $DOCKERHUB_USER/frontend-image:latest &&
                             sudo docker pull mongo:latest &&
