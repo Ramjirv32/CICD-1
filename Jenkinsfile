@@ -4,9 +4,9 @@ pipeline {
     environment {
         DOCKERHUB_USER = 'ramjirv3217'
         DOCKERHUB_PASS = credentials('DOCKERHUB_PASS')  
-        EC2_HOST      = '135.235.193.165'                   
-        EC2_USER      = 'ramji'                            
-        EC2_PASS      = credentials('EC2_PASS')              
+        EC2_HOST       = '135.235.193.165'                   
+        EC2_USER       = 'ramji'                            
+        EC2_PASS       = credentials('EC2_PASS')              
     }
 
     stages {
