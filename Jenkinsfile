@@ -78,10 +78,10 @@ pipeline {
       stage("Deploy to EC2") {
     steps {
         sh '''
-            sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml ramji@135.235.193.165:/home/ramji/todo-docker-compose.yml
-            sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./nginx.conf ramji@135.235.193.165:/home/ramji/nginx.conf
+            sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./todo-docker-compose.yml ramji@98.70.42.89:/home/ramji/todo-docker-compose.yml
+            sshpass -p "Vikas@23112005" scp -o StrictHostKeyChecking=no ./nginx.conf ramji@98.70.42.89:/home/ramji/nginx.conf
 
-            sshpass -p "Vikas@23112005" ssh -o StrictHostKeyChecking=no ramji@135.235.193.165 "
+            sshpass -p "Vikas@23112005" ssh -o StrictHostKeyChecking=no ramji@98.70.42.89 "
                 sudo docker pull ramjirv3217/backend-image:latest &&
                 sudo docker pull ramjirv3217/frontend-image:latest &&
                 sudo docker pull mongo:latest &&
