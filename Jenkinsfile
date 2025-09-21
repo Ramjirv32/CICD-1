@@ -103,9 +103,9 @@ pipeline {
     post {
         always {
             // Wrap cleanWs in node to avoid MissingContextVariableException
-            node {
+           
                 cleanWs()
-            }
+            
         }
     }
 }
